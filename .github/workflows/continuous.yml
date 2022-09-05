@@ -10,19 +10,19 @@ jobs:
   continuous:
     name: Run
     runs-on: windows-latest
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        path: main
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: main
 
-    - name: Checkout CEFSharpDockerfiles
-      uses: actions/checkout@v3
-      with:
-        repository: mitchcapper/CefSharpDockerfiles
-        path: CefSharpDockerfiles
+      - name: Checkout CEFSharpDockerfiles
+        uses: actions/checkout@v3
+        with:
+          repository: mitchcapper/CefSharpDockerfiles
+          path: CefSharpDockerfiles
 
-    - name: build
-      shell: pwsh
-      run: Invoke main/hub_build.ps1 -Passthru
-      
+      - name: build
+        shell: pwsh
+        run: Invoke main/hub_build.ps1 -Passthru
+        
