@@ -12,5 +12,5 @@ $VAR_CEF_USE_BINARY_PATH="";#useful for only building cef-binary and cefsharp fr
 $VAR_CEF_BINARY_EXT="zip"; #Can be zip,tar.bz2, 7z Generally do not change this off of Zip unless you are supplying your own binaries using $VAR_CEF_USE_BINARY_PATH above, and they have a different extension, will try to work with the other formats however
 $VAR_CEF_SAVE_SOURCES="0";
 $VAR_CEF_VERSION_STR="auto"; #can set to "3.3239.1723" or similar if you have multiple binaries that Docker_cefsharp might find
-$VAR_HYPERV_MEMORY_ADD="--memory=20g --isolation=hyperv"; #only matters if using HyperV, Note your swap file alone must be this big or able to grow to be this big, 30G is fairly safe for single build will need 60G for dual build.
+$VAR_HYPERV_MEMORY_ADD="--memory=20g --isolation=process"; #only matters if using HyperV, Note your swap file alone must be this big or able to grow to be this big, 30G is fairly safe for single build will need 60G for dual build.
 $VAR_BUILD_ARCHES="x64";
