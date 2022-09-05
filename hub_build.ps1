@@ -7,6 +7,7 @@ $CefDockerDir = Join-Path $WorkingDir "../CefSharpDockerfiles"
 try{
 	. (Join-Path $CefDockerDir 'functions.ps1')
 	Set-Location $CefDockerDir
+	Copy (Join-Path $WorkingDir "our_versions.ps1") "versions.ps1"
 
 
 	& "$CefDockerDir\build.ps1" -NoMemoryWarn
