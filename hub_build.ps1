@@ -9,7 +9,7 @@ try{
 
 
 
-	& "$CefDockerDir\build.ps1"
+	& "$CefDockerDir\build.ps1" -NoMemoryWarn
 
 	Write-Host -ForegroundColor Green Build completed successfully of test checkout!
 }catch{
