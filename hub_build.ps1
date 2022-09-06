@@ -25,7 +25,7 @@ try{
 	Write-Host Updating Page Files
 	$pagefile = Get-WmiObject Win32_ComputerSystem -EnableAllPrivileges
 	$pagefile.AutomaticManagedPagefile = $false
-	$pagefile.Put() | Out-Null
+	$pagefile.Put()
 	$pagefileset = Get-WmiObject Win32_pagefilesetting
 	$pagefileset.InitialSize = 2048
 	$pagefileset.MaximumSize = 10240

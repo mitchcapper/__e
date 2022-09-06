@@ -23,7 +23,7 @@ jobs:
           path: CefSharpDockerfiles
 
       - name: build
-        shell: pwsh
+        shell: powershell
         continue-on-error: true
         run: ./main/hub_build.ps1 -Passthru -Verbose
         
