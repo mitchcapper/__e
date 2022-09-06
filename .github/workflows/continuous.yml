@@ -25,7 +25,7 @@ jobs:
       - name: build
         shell: pwsh
         continue-on-error: true
-        run: ./main/hub_build.ps1 -Passthru
+        run: ./main/hub_build.ps1 -Passthru -Verbose
         
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
