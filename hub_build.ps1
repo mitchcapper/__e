@@ -8,18 +8,16 @@ try{
 	. (Join-Path $CefDockerDir 'functions.ps1')
 
 
-	git config --global pack.windowMemory 512m
 
-	$MonitorJob = Start-Job -ScriptBlock {
-		while ( $true ) {
-			Start-Sleep 120;
+	
+
+function StatusPrint {
 			$os = Get-Ciminstance Win32_OperatingSystem;
 			$physFree = $os.FreePhysicalMemory/1mb;
 			$pageFree = $os.FreeSpaceInPagingFiles/1mb;
 			$space = Get-Volume |  Format-Wide   {$_.DriveLetter +": " + ($_.SizeRemaining/1gb).ToString("0.0").PadLeft(5) + "/" + ($_.Size/1gb).ToString("0.0 gb").PadLeft(8)} -AutoSize | Out-String
 			Write-Host -ForegroundColor Yellow Physical Free Memory: $physFree.ToString("0.0") gb Page: $pageFree.ToString("0.0") gb disk usage: $space.Trim()
-		}
-	}
+}
 
 
 	Write-Host Updating Page Files
@@ -28,7 +26,7 @@ try{
 	$pagefile.Put()
 	$pagefileset = Get-WmiObject Win32_pagefilesetting
 	$pagefileset.InitialSize = 5096
-	$pagefileset.MaximumSize = 20480
+	$pagefileset.MaximumSize = 30480
 	$pagefileset.Put()
 
 	Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="d:\pagefile.sys";InitialSize = 2048; MaximumSize = 10240;} -EnableAllPrivileges
@@ -37,27 +35,29 @@ try{
 
 
 	Set-Location $CefDockerDir
-	Copy (Join-Path $WorkingDir "our_versions.ps1") "versions.ps1"
-	Copy (Join-Path $WorkingDir "our_Dockerfile_vs") "Dockerfile_vs"
-
-	#frees up a good bit of spce on the c drive where docker runs
-	Write-Host Freeing up space....
-	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
-	$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
-	Write-Host Space Feed
 
 
-	& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose
+	git config --global core.packedGitLimit  128m
+	git config --global core.packedGitWindowSize  128m
+	git config --global pack.deltaCacheSize  128m
+	git config --global pack.packSizeLimit  128m
+	git config --global pack.windowMemory  128m	
+	frees up a good bit of spce on the c drive where docker runs
+$rite-Host Freeing up space....
+	ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
+	ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
+	rite-Host Space Feed
+	StatusPrint
+& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose
 
 	Write-Host -ForegroundColor Green Build completed successfully of test checkout!
 }catch{
 	WriteException $_;
+	StatusPrint;
 	Set-Location $ORIGINAL_WORKING_DIR;
-	Stop-Job $MonitorJob	
 	throw $_;
 }
 Set-Location $ORIGINAL_WORKING_DIR;
-Stop-Job $MonitorJob
 
 
 #wmic pagefileset list /format:list
