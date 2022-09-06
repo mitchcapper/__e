@@ -27,11 +27,11 @@ try{
 	$pagefile.AutomaticManagedPagefile = $false
 	$pagefile.Put()
 	$pagefileset = Get-WmiObject Win32_pagefilesetting
-	$pagefileset.InitialSize = 2048
-	$pagefileset.MaximumSize = 10240
+	$pagefileset.InitialSize = 5096
+	$pagefileset.MaximumSize = 20480
 	$pagefileset.Put()
 
-	Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="c:\pagefile.sys";InitialSize = 5096; MaximumSize = 20480;} -EnableAllPrivileges
+	Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="d:\pagefile.sys";InitialSize = 2048; MaximumSize = 10240;} -EnableAllPrivileges
 	Get-WmiObject Win32_pagefilesetting
 
 
