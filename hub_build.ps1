@@ -44,7 +44,7 @@ function StatusPrint {
 	git config --global pack.windowMemory  128m	
 	# frees up a good bit of spce on the c drive where docker runs
 	Write-Host Freeing up space....
-	ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
+	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
 	ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
 	Write-Host Space Feed
 	StatusPrint
