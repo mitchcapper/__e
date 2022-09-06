@@ -22,14 +22,13 @@ jobs:
           repository: mitchcapper/CefSharpDockerfiles
           path: CefSharpDockerfiles
 
+      - name: build
+        shell: pwsh
+        continue-on-error: true
+        run: ./main/hub_build.ps1 -Passthru
+        
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         timeout-minutes: 1440
         with:
           limit-access-to-actor: true
-
-
-      - name: build
-        shell: pwsh
-        run: ./main/hub_build.ps1 -Passthru
-        
