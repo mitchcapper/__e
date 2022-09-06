@@ -22,11 +22,11 @@ jobs:
           repository: mitchcapper/CefSharpDockerfiles
           path: CefSharpDockerfiles
 
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      timeout-minutes: 1440
-      with:
-        limit-access-to-actor: true
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 1440
+        with:
+          limit-access-to-actor: true
 
 
       - name: build
