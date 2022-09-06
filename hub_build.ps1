@@ -25,15 +25,16 @@ try{
 	Write-Host Updating Page Files
 	$pagefile = Get-WmiObject Win32_ComputerSystem -EnableAllPrivileges
 	$pagefile.AutomaticManagedPagefile = $false
-	$pagefile.put() | Out-Null
+	$pagefile.Put() | Out-Null
 	$pagefileset = Get-WmiObject Win32_pagefilesetting
 	$pagefileset.InitialSize = 2048
 	$pagefileset.MaximumSize = 10240
-	$pagefileset.Put() | Out-Null
+	$pagefileset.Put()
 
-	Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="c:\pagefile.sys";
-	InitialSize = 5096; MaximumSize = 20480} -EnableAllPrivileges | Out-Null
-	Gwmi win32_pagefilesetting
+	Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="c:\pagefile.sys";InitialSize = 5096; MaximumSize = 20480;} -EnableAllPrivileges
+	Get-WmiObject Win32_pagefilesetting
+
+
 
 	Set-Location $CefDockerDir
 	Copy (Join-Path $WorkingDir "our_versions.ps1") "versions.ps1"
