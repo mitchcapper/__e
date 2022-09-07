@@ -8,7 +8,7 @@ try{
 	. (Join-Path $CefDockerDir 'functions.ps1')
 
 
-
+throw "EX"
 	
 
 function StatusPrint {
