@@ -8,7 +8,7 @@ try{
 	. (Join-Path $CefDockerDir 'functions.ps1')
 
 
-throw "EX"
+
 	
 
 function StatusPrint {
@@ -20,16 +20,24 @@ function StatusPrint {
 }
 
 
-	Write-Host Updating Page Files
-	$pagefile = Get-WmiObject Win32_ComputerSystem -EnableAllPrivileges
-	$pagefile.AutomaticManagedPagefile = $false
-	$pagefile.Put()
-	$pagefileset = Get-WmiObject Win32_pagefilesetting
-	$pagefileset.InitialSize = 20480
-	$pagefileset.MaximumSize = 40480
-	$pagefileset.Put()
+	Write-Host Updating Page Files shrinking main partition to add a second page file to drive
+	#Resize-Partition -DriveLetter C -Size 220GB
+	#New-Partition -DiskNumber 0 -UseMaximumSize -DriveLetter S
+	#Format-Volume -DriveLetter S	
+	#$pagefile = Get-WmiObject Win32_ComputerSystem -EnableAllPrivileges
+	#$pagefile.AutomaticManagedPagefile = $false
+	#$pagefile.Put()
+	#$pagefileset = Get-WmiObject Win32_pagefilesetting
+	#$pagefileset.InitialSize = 20480
+	#$pagefileset.MaximumSize = 40480
+	#$pagefileset.Put()
 
-	Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="d:\pagefile.sys";InitialSize = 8192; MaximumSize = 10240;} -EnableAllPrivileges
+	#Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="d:\pagefile.sys";InitialSize = 8192; MaximumSize = 10240;} -EnableAllPrivileges
+	#Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="s:\pagefile.sys";InitialSize = 18432; MaximumSize = 28672;} -EnableAllPrivileges
+	Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="c:\pagefile.sys";InitialSize = 28672; MaximumSize = 38912;} -EnableAllPrivileges
+
+
+
 	Get-WmiObject Win32_pagefilesetting
 
 
@@ -50,7 +58,7 @@ function StatusPrint {
 	Write-Host Space Feed
 	systeminfo
 	StatusPrint
-	throw "ERRRRRRRRRRRRRZ"
+	
 & "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose
 
 	Write-Host -ForegroundColor Green Build completed successfully of test checkout!
@@ -67,3 +75,9 @@ Set-Location $ORIGINAL_WORKING_DIR;
 #wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=2048,MaximumSize=2048
 
 #there is a system managed D one and no C one so lets add em
+
+
+
+Get-Partition -DriveLetter C
+
+
