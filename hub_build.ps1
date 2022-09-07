@@ -16,7 +16,7 @@ function StatusPrint {
 			$physFree = $os.FreePhysicalMemory/1mb;
 			$pageFree = $os.FreeSpaceInPagingFiles/1mb;
 			$space = Get-Volume |  Format-Wide   {$_.DriveLetter +": " + ($_.SizeRemaining/1gb).ToString("0.0").PadLeft(5) + "/" + ($_.Size/1gb).ToString("0.0 gb").PadLeft(8)} -AutoSize | Out-String
-			Write-Host -ForegroundColor Yellow Physical Free Memory: $physFree.ToString("0.0") gb Page: $pageFree.ToString("0.0") gb disk usage: $space.Trim()
+			Write-Host -ForegroundColor Yellow Physical Free Memory: $physFree.ToString("0.0") gb Page: $pageFree.ToString("0.0") gb disk free space: $space.Trim()
 }
 
 
@@ -35,7 +35,8 @@ function StatusPrint {
 
 
 	Set-Location $CefDockerDir
-
+	Copy (Join-Path $WorkingDir "our_versions.ps1") "versions.ps1"
+	Copy (Join-Path $WorkingDir "our_Dockerfile_vs") "Dockerfile_vs"
 
 	git config --global core.packedGitLimit  128m
 	git config --global core.packedGitWindowSize  128m
@@ -47,6 +48,7 @@ function StatusPrint {
 	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
 	$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
 	Write-Host Space Feed
+	systeminfo
 	StatusPrint
 & "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose
 
