@@ -50,6 +50,7 @@ function StatusPrint {
 	Write-Host Space Feed
 	systeminfo
 	StatusPrint
+	throw "ERRRRRRRRRRRRRZ"
 & "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose
 
 	Write-Host -ForegroundColor Green Build completed successfully of test checkout!
