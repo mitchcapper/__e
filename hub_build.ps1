@@ -25,11 +25,11 @@ function StatusPrint {
 	$pagefile.AutomaticManagedPagefile = $false
 	$pagefile.Put()
 	$pagefileset = Get-WmiObject Win32_pagefilesetting
-	$pagefileset.InitialSize = 5096
-	$pagefileset.MaximumSize = 30480
+	$pagefileset.InitialSize = 20480
+	$pagefileset.MaximumSize = 40480
 	$pagefileset.Put()
 
-	Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="d:\pagefile.sys";InitialSize = 2048; MaximumSize = 10240;} -EnableAllPrivileges
+	Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="d:\pagefile.sys";InitialSize = 8192; MaximumSize = 10240;} -EnableAllPrivileges
 	Get-WmiObject Win32_pagefilesetting
 
 
