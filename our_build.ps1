@@ -79,7 +79,8 @@ RunProc -proc "docker" -redirect_output:$redirect_output -opts "pull $VAR_BASE_D
 TimerNow("Pull base file");
 RunProc -proc "docker" -redirect_output:$redirect_output -opts "build $VAR_HYPERV_MEMORY_ADD --build-arg BASE_DOCKER_FILE=`"$VAR_BASE_DOCKER_FILE`" -f Dockerfile_vs -t vs ."
 TimerNow("VSBuild");
-run docker save vs | run zstd -o c:/temp/vs.tar.zstd | 2ps
+docker save vs | run zstd -o c:/temp/vs.tar.zstd | 2ps
+TimerNow("Docker Export VS");
 exit 0
 
 if ($VAR_CEF_USE_BINARY_PATH -and $VAR_CEF_USE_BINARY_PATH -ne ""){
