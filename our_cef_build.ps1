@@ -8,6 +8,7 @@ if (! $env:ARCHES){
 }
 $ARCHES = $env:ARCHES.Split(" ");
 $ARCHES_TO_BITKEY = @{};
+$JustToCEFSource = $env:JustToCEFSource;
 foreach ($arch in $ARCHES) {
 	$arch_bit = $arch;
 	if ($arch_bit.StartsWith("x")) {
@@ -54,6 +55,10 @@ if ($env:DUAL_BUILD -eq "1" -and $env:CHROME_BRANCH -lt 3396){ #newer builds can
 	}
 	$build_args_add = "-j " + ($cores/2);
 }
+if ($JustToCEFSource -eq "load"){
+	Set-Location -Path c:/code;
+	/code/bsdtar -axf /code/chromium_git/src.zstd
+}
 if (Test-Path c:/code/chromium_git/done -PathType Leaf){
 	Write-Host "Already Done just copying binaries";
 	CopyBinaries;
@@ -83,6 +88,14 @@ if ($Env:SHALLOW -eq "1"){
 
 # --no-update can't do no update for first time
 RunProc -proc "c:/code/depot_tools/python.bat" -opts "c:/code/automate/automate-git.py --download-dir=c:/code/chromium_git --branch=$env:CHROME_BRANCH --no-build --depot-tools-dir=c:/code/depot_tools  --no-debug-build --no-distrib --no-depot-tools-update"; #not sure why allowed errok before
+
+if ($JustToCEFSource -eq "save"){
+	Set-Location -Path c:/code;
+	/code/bsdtar -acf --exclude "*rc.zstd" /code/chromium_git/src.zstd chromium_git
+	exit 0;
+}
+
+
 Set-Location -Path c:/code/chromium_git/cef;
 if (! (Test-Path /code/chromium_git/already_patched -PathType Leaf)){
     copy c:/code/*.ps1 .
@@ -100,6 +113,7 @@ if (! (Test-Path /code/chromium_git/already_patched -PathType Leaf)){
     "1" > /code/chromium_git/already_patched    
 }
 Set-Location -Path c:/code/chromium_git/chromium/src;
+
 
 # track the build procs and build failures per arch
 $build_procs = @{}
