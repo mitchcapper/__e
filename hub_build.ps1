@@ -45,12 +45,19 @@ function StatusPrint {
 	Set-Location $CefDockerDir
 	Copy (Join-Path $WorkingDir "our_versions.ps1") "versions.ps1"
 	Copy (Join-Path $WorkingDir "our_Dockerfile_vs") "Dockerfile_vs"
+	Copy (Join-Path $WorkingDir "our_cef_build.ps1") "cef_build.ps1"
+	Copy (Join-Path $WorkingDir "our_Dockerfile_cef") "Dockerfile_cef"
+	Copy (Join-Path $WorkingDir "our_automate-git.py") "automate-git.py"
+	
+	
 
 	git config --global core.packedGitLimit  128m
 	git config --global core.packedGitWindowSize  128m
 	git config --global pack.deltaCacheSize  128m
 	git config --global pack.packSizeLimit  128m
 	git config --global pack.windowMemory  128m	
+	git config --global http.postbuffer  128m	
+
 	# frees up a good bit of spce on the c drive where docker runs
 	Write-Host Freeing up space....
 	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
