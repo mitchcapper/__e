@@ -27,6 +27,7 @@ jobs:
         continue-on-error: true
         run: ./main/hub_build.ps1 -Passthru -Verbose
 
+      - name: Upload Source State
         uses: actions/upload-artifact@v3
         with:
           name: docker_vs
