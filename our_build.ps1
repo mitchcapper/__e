@@ -64,7 +64,7 @@ if (! $NoVS2019PatchCopy -and $VAR_CHROME_BRANCH -lt 4103 ){
 	}
 }
 
-if (! Test-Path -Path "zstd.exe" -PathType Leaf ) {
+if (! (Test-Path -Path "zstd.exe" -PathType Leaf) ) {
 	#libarchive
 	Invoke-WebRequest 'https://page.ghfs.workers.dev/archive.dll' -OutFile 'archive.dll';
 	Invoke-WebRequest 'https://page.ghfs.workers.dev/bsdtar.exe' -OutFile 'bsdtar.exe';
