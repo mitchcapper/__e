@@ -57,7 +57,7 @@ function StatusPrint {
 	git config --global pack.packSizeLimit  128m
 	git config --global pack.windowMemory  128m	
 	git config --global http.postbuffer  128m	
-	git config --global pack.threads 2
+	#git config --global pack.threads 2
 
 	# frees up a good bit of spce on the c drive where docker runs
 	Write-Host Freeing up space....
