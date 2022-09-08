@@ -20,7 +20,7 @@ ADD https://bitbucket.org/chromiumembedded/cef/raw/master/tools/automate/automat
 ADD automate-git.py c:/code/automate/automate-git.py
 RUN cd c:/code/depot_tools/;./update_depot_tools.bat;./update_depot_tools.bat;
 RUN $env:Path = 'c:/code/depot_tools/;' + $env:Path;setx /M PATH $env:Path;
-ADD functions.ps1 cef_build.ps1 cef_patch.ps1 cef_patch_*.diff c:/code/
+ADD functions.ps1 cef_build.ps1 cef_patch.ps1 cef_patch_*.diff zstd.exe archive.dll bsdtar.exe c:/code/
 
 
 

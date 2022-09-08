@@ -46,6 +46,7 @@ function StatusPrint {
 	Copy (Join-Path $WorkingDir "our_versions.ps1") "versions.ps1"
 	Copy (Join-Path $WorkingDir "our_Dockerfile_vs") "Dockerfile_vs"
 	Copy (Join-Path $WorkingDir "our_cef_build.ps1") "cef_build.ps1"
+	Copy (Join-Path $WorkingDir "our_build.ps1") "build.ps1"
 	Copy (Join-Path $WorkingDir "our_Dockerfile_cef") "Dockerfile_cef"
 	Copy (Join-Path $WorkingDir "our_automate-git.py") "automate-git.py"
 	
@@ -66,8 +67,10 @@ function StatusPrint {
 	Write-Host Space Feed
 	systeminfo
 	StatusPrint
+	mkdir c:/temp/artifacts
+& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
+	Copy "c:/temp/vs.tar.zstd" "c:/temp/artifacts"
 	
-& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose
 
 	Write-Host -ForegroundColor Green Build completed successfully of test checkout!
 }catch{

@@ -26,6 +26,11 @@ jobs:
         shell: powershell
         continue-on-error: true
         run: ./main/hub_build.ps1 -Passthru -Verbose
+
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker_vs
+          path: c:/temp/artifacts
         
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
