@@ -73,7 +73,7 @@ function StatusPrint {
 	TimerNow("Starting");
 	Write-Host Freeing up space....
 	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
-	$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
+	#$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
 	TimerNow("Freeing up Space");
 	Write-Host Space Feed
 	systeminfo
