@@ -37,7 +37,6 @@ function StatusPrint {
 	Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="c:\pagefile.sys";InitialSize = 28672; MaximumSize = 38912;} -EnableAllPrivileges
 
 
-
 	Get-WmiObject Win32_pagefilesetting
 
 

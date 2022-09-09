@@ -34,7 +34,6 @@ jobs:
       - name: build
         if: steps.cache-vsbuild.outputs.cache-hit != 'true'
         shell: powershell
-        continue-on-error: true
         run: ./main/hub_build.ps1 -Passthru -Verbose
 
       
@@ -46,6 +45,7 @@ jobs:
         
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() }}
         timeout-minutes: 1440
         with:
           limit-access-to-actor: true
