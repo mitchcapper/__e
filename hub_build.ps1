@@ -91,10 +91,12 @@ function StatusPrint {
 		$tSize = ((Get-Item "c:/temp/artifacts/vs.tar.zstd").length/1GB).ToString("0.0 GB")
 		Write-Host "The docker file size is: $tSize"
 		Set-Location "c:/temp/artifacts/"
+		dir		
 		#for some reason just using the absolute path does not work
-		run zstd -d "vs.tar.zstd" | docker load | 2ps
+		run .\zstd.exe -d "vs.tar.zstd" | docker load | 2ps
 		Set-Location $CefDockerDir
 		TimerNow("Loaded vs into docker");
+		throw "WTF"
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
 	} else {
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToVSCache
