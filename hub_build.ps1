@@ -87,12 +87,15 @@ function StatusPrint {
 			Invoke-WebRequest 'https://page.ghfs.workers.dev/zstd.exe' -OutFile 'zstd.exe';
 
 		}
+
 		$tSize = ((Get-Item "c:/temp/artifacts/vs.tar.zstd").length/1GB).ToString("0.0 GB")
 		Write-Host "The docker file size is: $tSize"
-		 run zstd -d "c:/temp/artifacts/vs.tar.zstd" | docker load | 2ps
-		 TimerNow("Loaded vs into docker");
-		 throw "BOB"
-		 & "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
+		Set-Location "c:/temp/artifacts/"
+		#for some reason just using the absolute path does not work
+		run zstd -d "vs.tar.zstd" | docker load | 2ps
+		Set-Location $CefDockerDir
+		TimerNow("Loaded vs into docker");
+		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
 	} else {
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToVSCache
 		Copy "c:/temp/vs.tar.zstd" "c:/temp/artifacts"
