@@ -78,7 +78,7 @@ function StatusPrint {
 	Write-Host Space Feed
 	systeminfo
 	StatusPrint
-	mkdir c:/temp/artifacts
+	New-Item -ItemType Directory -Force -Path c:/temp/artifacts
 	if ($VSCache) {
 		 docker load
 		 run zstd -d "c:/temp/vs.tar.zstd" | docker load | 2ps
