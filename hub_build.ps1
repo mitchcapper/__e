@@ -1,7 +1,7 @@
 [CmdletBinding()]
 Param(
 	[Switch] $VSCache,
-	[Switch] $Passthru,
+	[Switch] $Passthru
 
 )
 Set-StrictMode -version latest;
