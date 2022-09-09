@@ -27,11 +27,16 @@ jobs:
         continue-on-error: true
         run: ./main/hub_build.ps1 -Passthru -Verbose
 
-      - name: Upload Source State
-        uses: actions/upload-artifact@v3
-        with:
-          name: docker_vs
-          path: c:/temp/artifacts
+      - name: Cache Source State
+      - uses: actions/cache@v3
+          with:
+            path: c:/temp/artifacts
+            key: docker_vs
+#      - name: Upload Source State
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: docker_vs
+#          path: c:/temp/artifacts
         
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
