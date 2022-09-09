@@ -22,16 +22,22 @@ jobs:
           repository: mitchcapper/CefSharpDockerfiles
           path: CefSharpDockerfiles
 
-      - name: build
-        shell: powershell
-        continue-on-error: true
-        run: ./main/hub_build.ps1 -Passthru -Verbose
-
-      - name: Cache Source State
+      
+      - name: Cache VSBuild Lookup
+        id: cache-vsbuild
         uses: actions/cache@v3
         with:
           path: c:/temp/artifacts
           key: docker_vs
+      
+
+      - name: build
+        if: steps.cache-vsbuild.outputs.cache-hit != 'true'
+        shell: powershell
+        continue-on-error: true
+        run: ./main/hub_build.ps1 -Passthru -Verbose
+
+      
 #      - name: Upload Source State
 #        uses: actions/upload-artifact@v3
 #        with:
