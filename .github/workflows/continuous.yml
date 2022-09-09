@@ -29,9 +29,9 @@ jobs:
 
       - name: Cache Source State
         uses: actions/cache@v3
-          with:
-            path: c:/temp/artifacts
-            key: docker_vs
+        with:
+          path: c:/temp/artifacts
+          key: docker_vs
 #      - name: Upload Source State
 #        uses: actions/upload-artifact@v3
 #        with:
