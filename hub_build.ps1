@@ -80,8 +80,16 @@ function StatusPrint {
 	StatusPrint
 	New-Item -ItemType Directory -Force -Path c:/temp/artifacts
 	if ($VSCache) {
+		if (! (Test-Path -Path "zstd.exe" -PathType Leaf) ) {
+			#libarchive
+			Invoke-WebRequest 'https://page.ghfs.workers.dev/archive.dll' -OutFile 'archive.dll';
+			Invoke-WebRequest 'https://page.ghfs.workers.dev/bsdtar.exe' -OutFile 'bsdtar.exe';
+			Invoke-WebRequest 'https://page.ghfs.workers.dev/zstd.exe' -OutFile 'zstd.exe';
+
+		}		
 		 run zstd -d "c:/temp/artifacts/vs.tar.zstd" | docker load | 2ps
 		 TimerNow("Loaded vs into docker");
+		 throw "BOB"
 		 & "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
 	} else {
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToVSCache
