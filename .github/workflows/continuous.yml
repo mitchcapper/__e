@@ -31,6 +31,12 @@ jobs:
           key: docker_vs
       
 
+
+      - name: build
+        if: steps.cache-vsbuild.outputs.cache-hit == 'true'
+        shell: powershell
+        run: ./main/hub_build.ps1 -Passthru -Verbose -VSCache
+
       - name: build
         if: steps.cache-vsbuild.outputs.cache-hit != 'true'
         shell: powershell

@@ -3,6 +3,7 @@ Param(
 	[Switch] $NoSkip,
 	[Switch] $NoMemoryWarn,
 	[Switch] $JustToCEFSource,
+	[Switch] $JustToVSCache,
 	[Switch] $NoVS2019PatchCopy
 )
 Install-Module -Name Use-RawPipeline -Scope CurrentUser -AcceptLicense -AllowPrerelease -SkipPublisherCheck -Force;
@@ -79,10 +80,12 @@ RunProc -proc "docker" -redirect_output:$redirect_output -opts "pull $VAR_BASE_D
 TimerNow("Pull base file");
 RunProc -proc "docker" -redirect_output:$redirect_output -opts "build $VAR_HYPERV_MEMORY_ADD --build-arg BASE_DOCKER_FILE=`"$VAR_BASE_DOCKER_FILE`" -f Dockerfile_vs -t vs ."
 TimerNow("VSBuild");
-run docker save vs | run zstd "-o" "c:/temp/vs.tar.zstd" | 2ps
+if ($JustToVSCache) {
+	run docker save vs | run zstd "-o" "c:/temp/vs.tar.zstd" | 2ps
 
-TimerNow("Docker Export VS size: " + ((Get-Item "c:/temp/vs.tar.zstd").length/1GB).ToString("0.0 GB"));
-exit 0
+	TimerNow("Docker Export VS size: " + ((Get-Item "c:/temp/vs.tar.zstd").length/1GB).ToString("0.0 GB"));
+	exit 0
+}
 $VAR_CEF_SAVE_SOURCES = "save";
 
 if ($VAR_CEF_USE_BINARY_PATH -and $VAR_CEF_USE_BINARY_PATH -ne ""){
@@ -106,7 +109,9 @@ if ($VAR_CEF_USE_BINARY_PATH -and $VAR_CEF_USE_BINARY_PATH -ne ""){
 			$JustToCEFSourceAdd = "-e JustToCEFSource=1";
 		}
 		RunProc -proc "docker" -redirect_output:$redirect_output -opts "run $VAR_HYPERV_MEMORY_ADD $JustToCEFSourceAdd -v $($VAR_CEF_BUILD_MOUNT_VOL_NAME):C:/code/chromium_git --name c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp cef_build_env"
-		
+		if ($JustToCEFSource){
+			exit 0
+		}
 		$exit_code = RunProc -errok -proc "docker" -opts "commit c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp i_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)";
 		$exit_code = RunProc -errok -proc "docker" -opts "tag i_$($VAR_CEF_BUILD_MOUNT_VOL_NAME) cef";
 	}

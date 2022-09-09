@@ -1,4 +1,13 @@
+[CmdletBinding()]
+Param(
+	[Switch] $VSCache
+
+)
 Set-StrictMode -version latest;
+Install-Module -Name Use-RawPipeline -Scope CurrentUser -AcceptLicense -AllowPrerelease -SkipPublisherCheck -Force;
+
+
+
 $ErrorActionPreference = "Stop";
 $ORIGINAL_WORKING_DIR = Get-Location;
 $WorkingDir = split-path -parent $MyInvocation.MyCommand.Definition;
@@ -60,15 +69,24 @@ function StatusPrint {
 	#git config --global pack.threads 2
 
 	# frees up a good bit of spce on the c drive where docker runs
+	TimerNow("Starting");
 	Write-Host Freeing up space....
 	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
-	#$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
+	$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
+	TimerNow("Freeing up Space");
 	Write-Host Space Feed
 	systeminfo
 	StatusPrint
 	mkdir c:/temp/artifacts
-& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
-	Copy "c:/temp/vs.tar.zstd" "c:/temp/artifacts"
+	if ($VSCache) {
+		 docker load
+		 run zstd -d "c:/temp/vs.tar.zstd" | docker load | 2ps
+		 TimerNow("Loaded vs into docker");
+		 & "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
+	} else {
+		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToVSCache
+		Copy "c:/temp/vs.tar.zstd" "c:/temp/artifacts"
+	}
 	
 
 	Write-Host -ForegroundColor Green Build completed successfully of test checkout!
