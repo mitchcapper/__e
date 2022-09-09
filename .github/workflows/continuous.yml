@@ -28,7 +28,7 @@ jobs:
         run: ./main/hub_build.ps1 -Passthru -Verbose
 
       - name: Cache Source State
-      - uses: actions/cache@v3
+        uses: actions/cache@v3
           with:
             path: c:/temp/artifacts
             key: docker_vs

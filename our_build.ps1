@@ -80,7 +80,8 @@ TimerNow("Pull base file");
 RunProc -proc "docker" -redirect_output:$redirect_output -opts "build $VAR_HYPERV_MEMORY_ADD --build-arg BASE_DOCKER_FILE=`"$VAR_BASE_DOCKER_FILE`" -f Dockerfile_vs -t vs ."
 TimerNow("VSBuild");
 run docker save vs | run zstd "-o" "c:/temp/vs.tar.zstd" | 2ps
-TimerNow("Docker Export VS");
+
+TimerNow("Docker Export VS size: " + ((Get-Item "c:/temp/vs.tar.zstd").length/1GB).ToString("0.0 GB"));
 exit 0
 $VAR_CEF_SAVE_SOURCES = "save";
 

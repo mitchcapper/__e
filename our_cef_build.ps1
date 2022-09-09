@@ -92,6 +92,8 @@ RunProc -proc "c:/code/depot_tools/python.bat" -opts "c:/code/automate/automate-
 if ($JustToCEFSource -eq "save"){
 	Set-Location -Path c:/code;
 	/code/bsdtar -acf --exclude "*rc.zstd" /code/chromium_git/src.zstd chromium_git
+	$size = ((Get-Item "/code/chromium_git/src.zstd").length/1GB).ToString("0.0 GB");
+	Write-Host Size compressed is: $size
 	exit 0;
 }
 
