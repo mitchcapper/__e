@@ -83,6 +83,7 @@ function StatusPrint {
 		 docker load
 		 run zstd -d "c:/temp/vs.tar.zstd" | docker load | 2ps
 		 TimerNow("Loaded vs into docker");
+		 throw "BERRRRRRRRRRRRRR"
 		 & "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
 	} else {
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToVSCache
