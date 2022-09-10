@@ -73,7 +73,7 @@ function StatusPrint {
 	TimerNow("Starting");
 	Write-Host Freeing up space....
 	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
-	#$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
+	$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
 	TimerNow("Freeing up Space");
 	Write-Host Space Feed
 	systeminfo
@@ -93,10 +93,10 @@ function StatusPrint {
 		Set-Location "c:/temp/artifacts/"
 		dir		
 		#for some reason just using the absolute path does not work
-		run .\zstd.exe -d "vs.tar.zstd" | docker load | 2ps
+		run .\zstd.exe -d vs.tar.zstd | docker load | 2ps
 		Set-Location $CefDockerDir
 		TimerNow("Loaded vs into docker");
-		throw "WTF"
+		#throw "WTF"
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
 	} else {
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToVSCache
