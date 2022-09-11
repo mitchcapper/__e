@@ -35,7 +35,7 @@ jobs:
       - name: build with vscache
         if: steps.cache-vsbuild.outputs.cache-hit == 'true'
         shell: powershell
-        run: ./main/hub_build.ps1 -Passthru -Verbose -VSCache
+        run: ./main/hub_build.ps1 -Passthru -Verbose -VSCache -NoFreeupSpace
 
       - name: make vscache
         if: steps.cache-vsbuild.outputs.cache-hit != 'true'
