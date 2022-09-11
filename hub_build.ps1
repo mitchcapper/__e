@@ -48,7 +48,7 @@ function StatusPrint {
 	Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="c:\pagefile.sys";InitialSize = 28672; MaximumSize = 38912;} -EnableAllPrivileges
 
 
-	Get-WmiObject Win32_pagefilesetting
+	#Get-WmiObject Win32_pagefilesetting
 
 
 
@@ -73,13 +73,13 @@ function StatusPrint {
 	TimerNow("Starting");
 	Write-Host Freeing up space....
 	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
-	if (! $NoFreeupSpace){
+	if (! $NoFreeupSpace -and $VSCache){
 		$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
 	}
 	TimerNow("Freeing up Space");
 	Write-Host Space Feed
 	systeminfo
-	StatusPrint
+	#StatusPrint
 	New-Item -ItemType Directory -Force -Path c:/temp/cache
 	New-Item -ItemType Directory -Force -Path c:/temp/artifacts
 	if ($VSCache) {
@@ -117,7 +117,7 @@ function StatusPrint {
 	Write-Host -ForegroundColor Green Build completed successfully of test checkout!
 }catch{
 	WriteException $_;
-	StatusPrint;
+	#StatusPrint;
 	Set-Location $ORIGINAL_WORKING_DIR;
 	exit 1;
 }

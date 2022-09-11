@@ -35,13 +35,19 @@ jobs:
       - name: build with vscache
         if: steps.cache-vsbuild.outputs.cache-hit == 'true'
         shell: powershell
-        run: ./main/hub_build.ps1 -Passthru -Verbose -VSCache -NoFreeupSpace
+        run: ./main/hub_build.ps1 -Passthru -Verbose -VSCache
 
       - name: make vscache
         if: steps.cache-vsbuild.outputs.cache-hit != 'true'
         shell: powershell
         run: ./main/hub_build.ps1 -Passthru -Verbose
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() }}
+        timeout-minutes: 1440
+        with:
+         limit-access-to-actor: true
       
       - name: Upload Source State
         uses: actions/upload-artifact@v3
@@ -49,9 +55,3 @@ jobs:
           name: cef_src
           path: c:/temp/artifacts
         
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ failure() }}
-        timeout-minutes: 1440
-        with:
-         limit-access-to-actor: true
