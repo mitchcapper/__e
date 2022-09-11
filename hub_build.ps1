@@ -1,7 +1,8 @@
 [CmdletBinding()]
 Param(
 	[Switch] $VSCache,
-	[Switch] $Passthru
+	[Switch] $Passthru,
+	[Switch] $NoFreeupSpace
 
 )
 Set-StrictMode -version latest;
@@ -60,7 +61,6 @@ function StatusPrint {
 	Copy (Join-Path $WorkingDir "our_automate-git.py") "automate-git.py"
 	
 	
-
 	git config --global core.packedGitLimit  128m
 	git config --global core.packedGitWindowSize  128m
 	git config --global pack.deltaCacheSize  128m
@@ -73,7 +73,9 @@ function StatusPrint {
 	TimerNow("Starting");
 	Write-Host Freeing up space....
 	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
-	$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
+	if (! $NoFreeupSpace){
+		$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
+	}
 	TimerNow("Freeing up Space");
 	Write-Host Space Feed
 	systeminfo
@@ -85,6 +87,7 @@ function StatusPrint {
 			Invoke-WebRequest 'https://page.ghfs.workers.dev/archive.dll' -OutFile 'archive.dll';
 			Invoke-WebRequest 'https://page.ghfs.workers.dev/bsdtar.exe' -OutFile 'bsdtar.exe';
 			Invoke-WebRequest 'https://page.ghfs.workers.dev/zstd.exe' -OutFile 'zstd.exe';
+			TimerNow("Fetch libarchive items");
 
 		}
 
@@ -93,7 +96,10 @@ function StatusPrint {
 		Set-Location "c:/temp/artifacts/"
 		dir		
 		#for some reason just using the absolute path does not work
-		run .\zstd.exe -d vs.tar.zstd | docker load | 2ps
+		#hrm it will load bz2 xz or gzip files our_automate-git
+		run .\zstd.exe -d vs.tar.zstd -o d:/vs.tar
+		docker load -i d:/vs.tar
+		#run .\zstd.exe -d vs.tar.zstd | docker load | 2ps
 		Set-Location $CefDockerDir
 		TimerNow("Loaded vs into docker");
 		#throw "WTF"

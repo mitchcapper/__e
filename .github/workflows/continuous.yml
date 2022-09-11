@@ -49,9 +49,9 @@ jobs:
 #          name: docker_vs
 #          path: c:/temp/artifacts
         
-      #- name: Setup tmate session
-        #uses: mxschmitt/action-tmate@v3
-        #if: ${{ failure() }}
-        #timeout-minutes: 1440
-        #with:
-          #limit-access-to-actor: true
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() }}
+        timeout-minutes: 1440
+        with:
+         limit-access-to-actor: true

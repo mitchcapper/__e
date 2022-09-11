@@ -19,7 +19,9 @@ foreach ($arch in $ARCHES) {
 		$ARCHES_TO_BITKEY[$arch] = $arch_bit;
 	}
 }
-
+mkdir /code/chromium_git/
+echo "hi" > /code/chromium_git/here.file
+throw "TRASH"
 
 Function CopyBinaries{
 	foreach ($arch in $ARCHES) {
