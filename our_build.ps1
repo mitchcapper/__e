@@ -106,7 +106,7 @@ if ($VAR_CEF_USE_BINARY_PATH -and $VAR_CEF_USE_BINARY_PATH -ne ""){
 		RunProc -errok -proc "docker" -opts "rm c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp"
 		$JustToCEFSourceAdd = "";
 		if ($JustToCEFSource){
-			$JustToCEFSourceAdd = "-e JustToCEFSource=save -v c:/temp/artifacts:c/temp/artifacts";
+			$JustToCEFSourceAdd = "-e JustToCEFSource=save -v c:/temp/artifacts:c:/temp/artifacts";
 		}
 		RunProc -proc "docker" -redirect_output:$redirect_output -opts "run $VAR_HYPERV_MEMORY_ADD $JustToCEFSourceAdd -v $($VAR_CEF_BUILD_MOUNT_VOL_NAME):C:/code/chromium_git --name c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp cef_build_env"
 		if ($JustToCEFSource){
