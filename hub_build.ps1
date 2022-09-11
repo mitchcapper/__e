@@ -116,7 +116,7 @@ function StatusPrint {
 	WriteException $_;
 	StatusPrint;
 	Set-Location $ORIGINAL_WORKING_DIR;
-	throw $_;
+	exit 1;
 }
 Set-Location $ORIGINAL_WORKING_DIR;
 
