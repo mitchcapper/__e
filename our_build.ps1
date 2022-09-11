@@ -110,7 +110,7 @@ if ($VAR_CEF_USE_BINARY_PATH -and $VAR_CEF_USE_BINARY_PATH -ne ""){
 		}
 		RunProc -proc "docker" -redirect_output:$redirect_output -opts "run $VAR_HYPERV_MEMORY_ADD $JustToCEFSourceAdd -v $($VAR_CEF_BUILD_MOUNT_VOL_NAME):C:/code/chromium_git --name c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp cef_build_env"
 		if ($JustToCEFSource){
-			RunProc -proc "docker" -redirect_output:$redirect_output -opts "cp c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp:/code/chromium_git/src.zstd c:/temp/src.zstd";
+			RunProc -proc "docker" -redirect_output:$redirect_output -opts "cp c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp:/code/chromium_git/src.tar.zstd c:/temp/src.tar.zstd";
 			exit 0
 		}
 		$exit_code = RunProc -errok -proc "docker" -opts "commit c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp i_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)";
