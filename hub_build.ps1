@@ -100,11 +100,10 @@ function StatusPrint {
 		#hrm it will load bz2 xz or gzip files our_automate-git
 		#.\zstd.exe -d vs.tar.zstd -o c:/temp/vs.tar
 		#docker load -i c:/temp/vs.tar
-		Invoke-NativeCommand -FilePath ".\zstd.exe" -ArgumentList @("-d", "vs.tar.zstd") | docker load | 2ps
+		Invoke-NativeCommand -FilePath ".\zstd.exe" -ArgumentList @("-d", "vs.tar.zstd", "--stdout") | run docker load | 2ps
 		Set-Location $CefDockerDir
 		docker images
 		TimerNow("Loaded vs into docker");
-		throw "WTF"
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
 	} else {
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToVSCache
