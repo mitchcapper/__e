@@ -78,7 +78,7 @@ echo *.zip | out .dockerignore
 TimerNow("Starting");
 RunProc -proc "docker" -redirect_output:$redirect_output -opts "pull $VAR_BASE_DOCKER_FILE";
 TimerNow("Pull base file");
-RunProc -proc "docker" -redirect_output:$redirect_output -opts "build $VAR_HYPERV_MEMORY_ADD --build-arg BASE_DOCKER_FILE=`"$VAR_BASE_DOCKER_FILE`" -f Dockerfile_vs -t vs ."
+RunProc -proc "docker" -redirect_output:$redirect_output -opts "build $VAR_HYPERV_MEMORY_ADD --build-arg BASE_DOCKER_FILE=`"$VAR_BASE_DOCKER_FILE`" -f Dockerfile_vs --cache-from vs -t vs ."
 TimerNow("VSBuild");
 if ($JustToVSCache) {
 	run docker save vs | run zstd "-o" "c:/temp/vs.tar.zstd" | 2ps
@@ -97,7 +97,7 @@ if ($VAR_CEF_USE_BINARY_PATH -and $VAR_CEF_USE_BINARY_PATH -ne ""){
 		Copy $docker_file_name $VAR_CEF_USE_BINARY_PATH;
 	}
 	Set-Location -Path $VAR_CEF_USE_BINARY_PATH;
-	RunProc -proc "docker" -redirect_output:$redirect_output -opts "build $VAR_HYPERV_MEMORY_ADD --build-arg BINARY_EXT=`"$VAR_CEF_BINARY_EXT`" -f $docker_file_name -t cef ."
+	RunProc -proc "docker" -redirect_output:$redirect_output -opts "build $VAR_HYPERV_MEMORY_ADD --build-arg BINARY_EXT=`"$VAR_CEF_BINARY_EXT`" -f $docker_file_name --cache-from vs --cache-from cef -t cef ."
 	Set-Location $ORIGINAL_WORKING_DIR;
 } else {
 	RunProc -proc "docker" -redirect_output:$redirect_output -opts "build $VAR_HYPERV_MEMORY_ADD --build-arg CEF_SAVE_SOURCES=`"$VAR_CEF_SAVE_SOURCES`" --build-arg ARCHES=`"$VAR_BUILD_ARCHES`" --build-arg BINARY_EXT=`"$VAR_CEF_BINARY_EXT`" --build-arg GN_ARGUMENTS=`"$VAR_GN_ARGUMENTS`" --build-arg DUAL_BUILD=`"$VAR_DUAL_BUILD`" --build-arg GN_DEFINES=`"$VAR_GN_DEFINES`" --build-arg GYP_DEFINES=`"$VAR_GYP_DEFINES`" --build-arg CHROME_BRANCH=`"$VAR_CHROME_BRANCH`" -f Dockerfile_cef -t cef_build_env ."
