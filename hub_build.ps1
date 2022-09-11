@@ -106,7 +106,8 @@ function StatusPrint {
 		docker images
 		TimerNow("Loaded vs into docker");
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
-		Move "c:/temp/src.tar.zstd" "c:/temp/artifacts"
+		#Move "c:/temp/src.tar.zstd" "c:/temp/artifacts"
+		dir "c:/temp/artifacts"
 		#cp /c/ProgramData/docker/volumes/cefbuild_rnnda/_data
 	} else {
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToVSCache
