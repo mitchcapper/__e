@@ -56,8 +56,8 @@ if ($env:DUAL_BUILD -eq "1" -and $env:CHROME_BRANCH -lt 3396){ #newer builds can
 	$build_args_add = "-j " + ($cores/2);
 }
 if ($JustToCEFSource -eq "load"){
-	Set-Location -Path c:/code;
-	/code/bsdtar -axf /code/chromium_git/src.zstd
+	Set-Location -Path /code/chromium_git;
+	/code/bsdtar -axf /code/chromium_git/src.zstd 
 }
 if (Test-Path c:/code/chromium_git/done -PathType Leaf){
 	Write-Host "Already Done just copying binaries";
@@ -91,7 +91,7 @@ RunProc -proc "c:/code/depot_tools/python.bat" -opts "c:/code/automate/automate-
 
 if ($JustToCEFSource -eq "save"){
 	Set-Location -Path c:/code;
-	/code/bsdtar -acf --exclude "*rc.zstd" /code/chromium_git/src.zstd chromium_git
+	/code/bsdtar --exclude "*rc.zstd" -acf /code/chromium_git/src.zstd chromium_git
 	$size = ((Get-Item "/code/chromium_git/src.zstd").length/1GB).ToString("0.0 GB");
 	Write-Host Size compressed is: $size
 	exit 0;
