@@ -97,7 +97,7 @@ function StatusPrint {
 		dir		
 		#for some reason just using the absolute path does not work
 		#hrm it will load bz2 xz or gzip files our_automate-git
-		run .\zstd.exe -d vs.tar.zstd -o d:/vs.tar
+		.\zstd.exe -d vs.tar.zstd -o d:/vs.tar
 		docker load -i d:/vs.tar
 		#run .\zstd.exe -d vs.tar.zstd | docker load | 2ps
 		Set-Location $CefDockerDir
