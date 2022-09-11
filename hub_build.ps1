@@ -80,9 +80,10 @@ function StatusPrint {
 	Write-Host Space Feed
 	systeminfo
 	StatusPrint
+	New-Item -ItemType Directory -Force -Path c:/temp/cache
 	New-Item -ItemType Directory -Force -Path c:/temp/artifacts
 	if ($VSCache) {
-		Set-Location "c:/temp/artifacts/"
+		Set-Location "c:/temp/cache/"
 		if (! (Test-Path -Path "zstd.exe" -PathType Leaf) ) {
 			#libarchive
 			Invoke-WebRequest 'https://page.ghfs.workers.dev/archive.dll' -OutFile 'archive.dll';
@@ -92,7 +93,7 @@ function StatusPrint {
 
 		}
 
-		$tSize = ((Get-Item "c:/temp/artifacts/vs.tar.zstd").length/1GB).ToString("0.0 GB")
+		$tSize = ((Get-Item "c:/temp/cache/vs.tar.zstd").length/1GB).ToString("0.0 GB")
 		Write-Host "The docker file size is: $tSize"
 		
 		dir
@@ -105,9 +106,11 @@ function StatusPrint {
 		docker images
 		TimerNow("Loaded vs into docker");
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
+		Move "c:/temp/src.tar.zstd" "c:/temp/artifacts"
+		#cp /c/ProgramData/docker/volumes/cefbuild_rnnda/_data
 	} else {
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToVSCache
-		Copy "c:/temp/vs.tar.zstd" "c:/temp/artifacts"
+		Move "c:/temp/vs.tar.zstd" "c:/temp/cache"
 	}
 	
 
