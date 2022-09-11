@@ -82,6 +82,7 @@ function StatusPrint {
 	StatusPrint
 	New-Item -ItemType Directory -Force -Path c:/temp/artifacts
 	if ($VSCache) {
+		Set-Location "c:/temp/artifacts/"
 		if (! (Test-Path -Path "zstd.exe" -PathType Leaf) ) {
 			#libarchive
 			Invoke-WebRequest 'https://page.ghfs.workers.dev/archive.dll' -OutFile 'archive.dll';
@@ -93,12 +94,12 @@ function StatusPrint {
 
 		$tSize = ((Get-Item "c:/temp/artifacts/vs.tar.zstd").length/1GB).ToString("0.0 GB")
 		Write-Host "The docker file size is: $tSize"
-		Set-Location "c:/temp/artifacts/"
-		dir		
+		
+		dir
 		#for some reason just using the absolute path does not work
 		#hrm it will load bz2 xz or gzip files our_automate-git
-		.\zstd.exe -d vs.tar.zstd -o d:/vs.tar
-		docker load -i d:/vs.tar
+		.\zstd.exe -d vs.tar.zstd -o c:/temp/vs.tar
+		docker load -i c:/temp/vs.tar
 		#run .\zstd.exe -d vs.tar.zstd | docker load | 2ps
 		Set-Location $CefDockerDir
 		TimerNow("Loaded vs into docker");
