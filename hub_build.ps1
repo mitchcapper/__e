@@ -139,7 +139,7 @@ function StatusPrint {
 
 	Write-Host -ForegroundColor Green Build completed successfully of test checkout!
 }catch{
-	WriteException2 $_, "Hub Build";
+	WriteException2 $_;
 	#StatusPrint;
 	Set-Location $ORIGINAL_WORKING_DIR;
 	exit 1;
