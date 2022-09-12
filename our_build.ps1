@@ -108,15 +108,15 @@ if ($VAR_CEF_USE_BINARY_PATH -and $VAR_CEF_USE_BINARY_PATH -ne ""){
 		$SpecificCmdOverride="";
 		if ($Special -eq "MakeCefSrcArtifact"){
 			$DockerAddlOptions = "-v c:/temp/artifacts:c:/temp/artifacts";
-			$SpecificCmdOverride="powershell 'c:/code/cef_build.ps1' -Special SrcSave";
+			$SpecificCmdOverride="powershell.exe -File 'c:/code/cef_build.ps1' -Special SrcSave";
 			#SrcLoad
 		}
 		if ($Special -eq "RestoreCefSrcArtifact"){
 			$DockerAddlOptions = "-v c:/temp/artifacts:c:/temp/artifacts";
-			$SpecificCmdOverride="powershell 'c:/code/cef_build.ps1' -Special SrcLoad";
+			$SpecificCmdOverride="powershell.exe -File 'c:/code/cef_build.ps1' -Special SrcLoad";
 		}
 		if ($Special -eq "CefBuild"){
-			$SpecificCmdOverride="powershell 'c:/code/cef_build.ps1' -NoAutomateGit";
+			$SpecificCmdOverride="powershell.exe -File 'c:/code/cef_build.ps1' -NoAutomateGit";
 		}
 		RunProc -proc "docker" -redirect_output:$redirect_output -opts "run $VAR_HYPERV_MEMORY_ADD $DockerAddlOptions -v $($VAR_CEF_BUILD_MOUNT_VOL_NAME):C:/code/chromium_git --name c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp cef_build_env $SpecificCmdOverride"
 		if ($Special -eq "MakeCefSrcArtifact" -or $Special -eq "RestoreCefSrcArtifact"){
