@@ -7,7 +7,7 @@ Param(
 )
 Set-StrictMode -version latest;
 Install-Module -Name Use-RawPipeline -Scope CurrentUser -AcceptLicense -AllowPrerelease -SkipPublisherCheck -Force;
-Function WriteException2($exp){
+Function WriteException2($exp,$addlNote=""){
 
 	write-host "Caught an exception$addlNote :" -ForegroundColor Yellow -NoNewline
 	write-host " $($exp.Exception.Message)" -ForegroundColor Red
