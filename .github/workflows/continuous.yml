@@ -16,7 +16,21 @@ jobs:
         uses: actions/cache@v3
         with:
           path: c:/temp/cache
-          key: docker_vs    
+          key: docker_vs
+      
+      - name: Checkout
+        uses: actions/checkout@v3
+        if: steps.cache-vsbuild.outputs.cache-hit != 'true'
+        with:
+          path: main
+
+      - name: Checkout CEFSharpDockerfiles
+        uses: actions/checkout@v3
+        if: steps.cache-vsbuild.outputs.cache-hit != 'true'
+        with:
+          repository: mitchcapper/CefSharpDockerfiles
+          path: CefSharpDockerfiles
+
       - name: make vscache
         if: steps.cache-vsbuild.outputs.cache-hit != 'true'
         shell: powershell
@@ -40,6 +54,19 @@ jobs:
         with:
           path: c:/temp/cache
           key: docker_vs    
+
+      - name: Checkout
+        if: steps.existing-artifact-check.outputs.exist != 'true'
+        uses: actions/checkout@v3
+        with:
+          path: main
+
+      - name: Checkout CEFSharpDockerfiles
+        if: steps.existing-artifact-check.outputs.exist != 'true'
+        uses: actions/checkout@v3
+        with:
+          repository: mitchcapper/CefSharpDockerfiles
+          path: CefSharpDockerfiles
 
       - name: vscache restore
         if: steps.existing-artifact-check.outputs.exist != 'true'
@@ -71,6 +98,17 @@ jobs:
           path: c:/temp/cache
           key: docker_vs
 
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: main
+
+      - name: Checkout CEFSharpDockerfiles
+        uses: actions/checkout@v3
+        with:
+          repository: mitchcapper/CefSharpDockerfiles
+          path: CefSharpDockerfiles
+          
       - name: vscache restore
         shell: powershell
         run: ./main/hub_build.ps1 -Verbose -Special RestoreVSCache
