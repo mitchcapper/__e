@@ -1,3 +1,11 @@
+[CmdletBinding()]
+Param(
+    [ValidateSet('','SrcLoad','SrcSave')]
+	[string[]] $Special="",
+	[Switch] $NoAutomateGit
+
+)
+
 Set-StrictMode -version latest;
 $ErrorActionPreference = "Stop";
 $WorkingDir = split-path -parent $MyInvocation.MyCommand.Definition;
@@ -8,7 +16,7 @@ if (! $env:ARCHES){
 }
 $ARCHES = $env:ARCHES.Split(" ");
 $ARCHES_TO_BITKEY = @{};
-$JustToCEFSource = $env:JustToCEFSource;
+$Special = $env:Special;
 foreach ($arch in $ARCHES) {
 	$arch_bit = $arch;
 	if ($arch_bit.StartsWith("x")) {
@@ -55,7 +63,7 @@ if ($env:DUAL_BUILD -eq "1" -and $env:CHROME_BRANCH -lt 3396){ #newer builds can
 	}
 	$build_args_add = "-j " + ($cores/2);
 }
-if ($JustToCEFSource -eq "load"){
+if ($Special -eq "SrcLoad"){
 	Set-Location -Path /code;
 	/code/bsdtar -axf /temp/artifacts/src.tar.zstd
 }
@@ -87,11 +95,14 @@ if ($Env:SHALLOW -eq "1"){
 }
 
 # --no-update can't do no update for first time
-RunProc -proc "c:/code/depot_tools/python.bat" -opts "c:/code/automate/automate-git.py --download-dir=c:/code/chromium_git --branch=$env:CHROME_BRANCH --no-build --depot-tools-dir=c:/code/depot_tools  --no-debug-build --no-distrib --no-depot-tools-update"; #not sure why allowed errok before
+if (! $NoAutomateGit){
+	RunProc -proc "c:/code/depot_tools/python.bat" -opts "c:/code/automate/automate-git.py --download-dir=c:/code/chromium_git --branch=$env:CHROME_BRANCH --no-build --depot-tools-dir=c:/code/depot_tools  --no-debug-build --no-distrib --no-depot-tools-update"; #not sure why allowed errok before
+}
 
-if ($JustToCEFSource -eq "save"){
+if ($Special -eq "SrcSave"){
 	Set-Location -Path c:/code;
-	/code/bsdtar --exclude-vcs --exclude "*rc.zstd" -acf /temp/artifacts/src.tar.zstd chromium_git
+	#went back and forth on excluding .git files but we use git apply for patches
+	/code/bsdtar --options zstd:compression-level=5, zstd:threads=0 --exclude "*rc.zstd" -acf /temp/artifacts/src.tar.zstd chromium_git
 	$size = ((Get-Item "/temp/artifacts/src.tar.zstd").length/1GB).ToString("0.0 GB");
 	Write-Host Size compressed is: $size
 	exit 0;

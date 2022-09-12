@@ -2,8 +2,8 @@
 Param(
 	[Switch] $NoSkip,
 	[Switch] $NoMemoryWarn,
-	[Switch] $JustToCEFSource,
-	[Switch] $JustToVSCache,
+    [ValidateSet('','MakeVSCache','MakeCefSrcArtifact', 'RestoreCefSrcArtifact', 'CefBuild')]
+	[string] $Special="",
 	[Switch] $NoVS2019PatchCopy
 )
 Install-Module -Name Use-RawPipeline -Scope CurrentUser -AcceptLicense -AllowPrerelease -SkipPublisherCheck -Force;
@@ -80,10 +80,10 @@ RunProc -proc "docker" -redirect_output:$redirect_output -opts "pull $VAR_BASE_D
 TimerNow("Pull base file");
 RunProc -proc "docker" -redirect_output:$redirect_output -opts "build $VAR_HYPERV_MEMORY_ADD --build-arg BASE_DOCKER_FILE=`"$VAR_BASE_DOCKER_FILE`" -f Dockerfile_vs --cache-from vs -t vs ."
 TimerNow("VSBuild");
-if ($JustToVSCache) {
-	run docker save vs | run zstd "-o" "c:/temp/vs.tar.zstd" | 2ps
+if ($Special -eq "MakeVSCache") {
+	run docker save vs | run zstd "-o" "c:/temp/cache/vs.tar.zstd" | 2ps
 
-	TimerNow("Docker Export VS size: " + ((Get-Item "c:/temp/vs.tar.zstd").length/1GB).ToString("0.0 GB"));
+	TimerNow("Docker Export VS size: " + ((Get-Item "c:/temp/cache/vs.tar.zstd").length/1GB).ToString("0.0 GB"));
 	exit 0
 }
 $VAR_CEF_SAVE_SOURCES = "save";
@@ -104,17 +104,30 @@ if ($VAR_CEF_USE_BINARY_PATH -and $VAR_CEF_USE_BINARY_PATH -ne ""){
 	$exit_code = RunProc -errok -proc "docker" -opts "tag i_$($VAR_CEF_BUILD_MOUNT_VOL_NAME) cef"; #if this fails we know it didn't build correctly and to continue
 	if ($exit_code -ne 0){
 		RunProc -errok -proc "docker" -opts "rm c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp"
-		$JustToCEFSourceAdd = "";
-		if ($JustToCEFSource){
-			$JustToCEFSourceAdd = "-e JustToCEFSource=save -v c:/temp/artifacts:c:/temp/artifacts";
+		$DockerAddlOptions = "";
+		$SpecificCmdOverride="";
+		if ($Special -eq "MakeCefSrcArtifact"){
+			$DockerAddlOptions = "-v c:/temp/artifacts:c:/temp/artifacts";
+			$SpecificCmdOverride="powershell 'c:/code/cef_build.ps1' -Special SrcSave";
+			#SrcLoad
 		}
-		RunProc -proc "docker" -redirect_output:$redirect_output -opts "run $VAR_HYPERV_MEMORY_ADD $JustToCEFSourceAdd -v $($VAR_CEF_BUILD_MOUNT_VOL_NAME):C:/code/chromium_git --name c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp cef_build_env"
-		if ($JustToCEFSource){
+		if ($Special -eq "RestoreCefSrcArtifact"){
+			$DockerAddlOptions = "-v c:/temp/artifacts:c:/temp/artifacts";
+			$SpecificCmdOverride="powershell 'c:/code/cef_build.ps1' -Special SrcLoad";
+		}
+		if ($Special -eq "CefBuild"){
+			$SpecificCmdOverride="powershell 'c:/code/cef_build.ps1' -NoAutomateGit";
+		}
+		RunProc -proc "docker" -redirect_output:$redirect_output -opts "run $VAR_HYPERV_MEMORY_ADD $DockerAddlOptions -v $($VAR_CEF_BUILD_MOUNT_VOL_NAME):C:/code/chromium_git --name c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp cef_build_env $SpecificCmdOverride"
+		if ($Special -eq "MakeCefSrcArtifact" -or $Special -eq "RestoreCefSrcArtifact"){
 			#RunProc -proc "docker" -redirect_output:$redirect_output -opts "cp c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp:/code/chromium_git/src.tar.zstd c:/temp/src.tar.zstd";
 			exit 0
 		}
 		$exit_code = RunProc -errok -proc "docker" -opts "commit c_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)_tmp i_$($VAR_CEF_BUILD_MOUNT_VOL_NAME)";
 		$exit_code = RunProc -errok -proc "docker" -opts "tag i_$($VAR_CEF_BUILD_MOUNT_VOL_NAME) cef";
+		if ($Special -eq "CefBuild"){
+			exit 0
+		}
 	}
 }
 TimerNow("CEF Build");

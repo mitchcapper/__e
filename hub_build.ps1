@@ -1,8 +1,8 @@
 [CmdletBinding()]
 Param(
-	[Switch] $VSCache,
-	[Switch] $Passthru,
-	[Switch] $NoFreeupSpace
+    [ValidateSet('','MakeVSCache','MakeCefSrcArtifact','RestoreVSCache', 'RestoreCefSrcArtifact', 'CefBuild')]
+	[string] $Special="",
+	[Switch] $NoSpaceFreeIfNeeded
 
 )
 Set-StrictMode -version latest;
@@ -73,7 +73,7 @@ function StatusPrint {
 	TimerNow("Starting");
 	Write-Host Freeing up space....
 	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
-	if (! $NoFreeupSpace -and $VSCache){
+	if (! $NoSpaceFreeIfNeeded -and ($Special -eq "RestoreCefSrcArtifact" -or $Special -eq "CefBuild") ){
 		$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
 	}
 	TimerNow("Freeing up Space");
@@ -82,7 +82,7 @@ function StatusPrint {
 	#StatusPrint
 	New-Item -ItemType Directory -Force -Path c:/temp/cache
 	New-Item -ItemType Directory -Force -Path c:/temp/artifacts
-	if ($VSCache) {
+	if ($Special -eq "RestoreVSCache") {
 		Set-Location "c:/temp/cache/"
 		if (! (Test-Path -Path "zstd.exe" -PathType Leaf) ) {
 			#libarchive
@@ -105,14 +105,21 @@ function StatusPrint {
 		Set-Location $CefDockerDir
 		docker images
 		TimerNow("Loaded vs into docker");
-		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToCEFSource
-		#Move "c:/temp/src.tar.zstd" "c:/temp/artifacts"
-		dir "c:/temp/artifacts"
 		#cp /c/ProgramData/docker/volumes/cefbuild_rnnda/_data
-	} else {
-		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -JustToVSCache
-		Move "c:/temp/vs.tar.zstd" "c:/temp/cache"
 	}
+	if ($Special -eq "MakeVSCache") {
+		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -Special MakeVSCache
+		exit 0;
+	}
+
+	if ($Special -eq "MakeCefSrcArtifact"){
+		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -Special MakeCefSrcArtifact
+		exit 0;
+	}
+	& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -Special CefBuild
+	#Move "c:/temp/src.tar.zstd" "c:/temp/artifacts"
+	dir "c:/temp/artifacts"
+
 	
 
 	Write-Host -ForegroundColor Green Build completed successfully of test checkout!

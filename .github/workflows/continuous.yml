@@ -7,40 +7,90 @@ on:
       - trash
 
 jobs:
-  continuous:
-    name: Run
+  jvs-base-image-cache:
+    name: vs-base-image-cache
     runs-on: windows-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Cache VSBuild Lookup
+        id: cache-vsbuild
+        uses: actions/cache@v3
         with:
-          path: main
+          path: c:/temp/cache
+          key: docker_vs    
+      - name: make vscache
+        if: steps.cache-vsbuild.outputs.cache-hit != 'true'
+        shell: powershell
+        run: ./main/hub_build.ps1 -Verbose -Special MakeVSCache
 
-      - name: Checkout CEFSharpDockerfiles
-        uses: actions/checkout@v3
+  jcef-source-artifact:
+    name: cef-source-artifact
+    runs-on: windows-latest
+    needs: jvs-base-image-cache
+    steps:
+      - name: existing artifact check
+        id: existing-artifact-check
+        uses: xSAVIKx/artifact-exists-action@v0
         with:
-          repository: mitchcapper/CefSharpDockerfiles
-          path: CefSharpDockerfiles
+            name: 'cef_src'
 
+      - name: Cache VSBuild Lookup
+        id: cache-vsbuild
+        if: steps.existing-artifact-check.outputs.exist != 'true'
+        uses: actions/cache@v3
+        with:
+          path: c:/temp/cache
+          key: docker_vs    
+
+      - name: vscache restore
+        if: steps.existing-artifact-check.outputs.exist != 'true'
+        shell: powershell
+        run: ./main/hub_build.ps1 -Verbose -Special RestoreVSCache
       
+      - name: make cef source artifact
+        if: steps.existing-artifact-check.outputs.exist != 'true'
+        shell: powershell
+        run: ./main/hub_build.ps1 -Verbose -Special MakeCefSrcArtifact
+
+      - name: Upload CEF Source artifact
+        uses: actions/upload-artifact@v3
+        if: steps.existing-artifact-check.outputs.exist != 'true'
+        with:
+          name: cef_src
+          path: c:/temp/artifacts
+
+
+  jcef-compile:
+    name: jcef-compile
+    runs-on: windows-latest
+    needs: [jvs-base-image-cache, jcef-source-artifact]
+    steps:
       - name: Cache VSBuild Lookup
         id: cache-vsbuild
         uses: actions/cache@v3
         with:
           path: c:/temp/cache
           key: docker_vs
-      
 
-
-      - name: build with vscache
-        if: steps.cache-vsbuild.outputs.cache-hit == 'true'
+      - name: vscache restore
         shell: powershell
-        run: ./main/hub_build.ps1 -Passthru -Verbose -VSCache
+        run: ./main/hub_build.ps1 -Verbose -Special RestoreVSCache
 
-      - name: make vscache
+      - name: Download previous CEF Source cache artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: cef_src
+          required: true
+          path: c:/temp/artifacts        
+
+
+      - name: cef source restore
+        shell: powershell
+        run: ./main/hub_build.ps1 -Verbose -Special RestoreCefSrcArtifact
+
+      - name: compile cef
         if: steps.cache-vsbuild.outputs.cache-hit != 'true'
         shell: powershell
-        run: ./main/hub_build.ps1 -Passthru -Verbose
+        run: ./main/hub_build.ps1 -Verbose -Special CefBuild
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
@@ -49,9 +99,3 @@ jobs:
         with:
          limit-access-to-actor: true
       
-      - name: Upload Source State
-        uses: actions/upload-artifact@v3
-        with:
-          name: cef_src
-          path: c:/temp/artifacts
-        
