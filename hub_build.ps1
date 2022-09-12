@@ -7,7 +7,19 @@ Param(
 )
 Set-StrictMode -version latest;
 Install-Module -Name Use-RawPipeline -Scope CurrentUser -AcceptLicense -AllowPrerelease -SkipPublisherCheck -Force;
+Function WriteException2($exp){
 
+	write-host "Caught an exception$addlNote:" -ForegroundColor Yellow -NoNewline
+	write-host " $($exp.Exception.Message)" -ForegroundColor Red
+	write-host "`tException Type: $($exp.Exception.GetType().FullName)"
+	$stack = $exp.ScriptStackTrace;
+	$stack = $stack.replace("`n","`n`t")
+	write-host "`tStack Trace: $stack"
+	if ($exp.Exception.InnerException){
+		write-host "`tInnerException:" -ForegroundColor Yellow -NoNewline
+		write-host " $($exp.Exception.InnerException.Message)" -ForegroundColor Red
+	}
+}
 
 
 $ErrorActionPreference = "Stop";
@@ -127,7 +139,7 @@ function StatusPrint {
 
 	Write-Host -ForegroundColor Green Build completed successfully of test checkout!
 }catch{
-	WriteException $_, "Hub Build";
+	WriteException2 $_, "Hub Build";
 	#StatusPrint;
 	Set-Location $ORIGINAL_WORKING_DIR;
 	exit 1;

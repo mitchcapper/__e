@@ -8,19 +8,7 @@ Param(
 )
 Install-Module -Name Use-RawPipeline -Scope CurrentUser -AcceptLicense -AllowPrerelease -SkipPublisherCheck -Force;
 
-Function WriteException2($exp){
 
-	write-host "Caught an exception$addlNote:" -ForegroundColor Yellow -NoNewline
-	write-host " $($exp.Exception.Message)" -ForegroundColor Red
-	write-host "`tException Type: $($exp.Exception.GetType().FullName)"
-	$stack = $exp.ScriptStackTrace;
-	$stack = $stack.replace("`n","`n`t")
-	write-host "`tStack Trace: $stack"
-	if ($exp.Exception.InnerException){
-		write-host "`tInnerException:" -ForegroundColor Yellow -NoNewline
-		write-host " $($exp.Exception.InnerException.Message)" -ForegroundColor Red
-	}
-}
 
 $WorkingDir = split-path -parent $MyInvocation.MyCommand.Definition;
 . (Join-Path $WorkingDir 'functions.ps1')
@@ -168,7 +156,7 @@ if ($VAR_REMOVE_VOLUME_ON_SUCCESSFUL_BUILD){
 }
 Write-Host -ForegroundColor Green Build completed successfully! See $global:PERF_FILE for timing for each step.
 }catch{
-	WriteException2 $_, "Build.ps1";
+	WriteException $_, "Build.ps1";
 	Set-Location $ORIGINAL_WORKING_DIR;
 	throw $_;
 }
