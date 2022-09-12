@@ -121,7 +121,7 @@ Function WriteException($exp,$addlNote=""){
 	if ($addlNote){
 		$addlNote = " " + $addlNote;
 	}
-	write-host "Caught an exception$addlNote:" -ForegroundColor Yellow -NoNewline
+	write-host "Caught an exception$addlNote :" -ForegroundColor Yellow -NoNewline
 	write-host " $($exp.Exception.Message)" -ForegroundColor Red
 	write-host "`tException Type: $($exp.Exception.GetType().FullName)"
 	$stack = $exp.ScriptStackTrace;
