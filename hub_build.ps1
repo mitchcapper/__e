@@ -75,10 +75,11 @@ function StatusPrint {
 	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
 	if (! $NoSpaceFreeIfNeeded -and ($Special -eq "RestoreCefSrcArtifact" -or $Special -eq "CefBuild") ){
 		$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
+		TimerNow("Freeing up Space");
+		Write-Host Space Feed		
 	}
-	TimerNow("Freeing up Space");
-	Write-Host Space Feed
-	systeminfo
+
+	#systeminfo
 	#StatusPrint
 	New-Item -ItemType Directory -Force -Path c:/temp/cache
 	New-Item -ItemType Directory -Force -Path c:/temp/artifacts
@@ -106,6 +107,7 @@ function StatusPrint {
 		docker images
 		TimerNow("Loaded vs into docker");
 		#cp /c/ProgramData/docker/volumes/cefbuild_rnnda/_data
+		exit 0;
 	}
 	if ($Special -eq "MakeVSCache") {
 		& "$CefDockerDir\build.ps1" -NoMemoryWarn -Verbose -Special MakeVSCache
@@ -124,7 +126,7 @@ function StatusPrint {
 
 	Write-Host -ForegroundColor Green Build completed successfully of test checkout!
 }catch{
-	WriteException $_;
+	WriteException $_, "Hub Build";
 	#StatusPrint;
 	Set-Location $ORIGINAL_WORKING_DIR;
 	exit 1;
