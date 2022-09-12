@@ -16,6 +16,7 @@ $WorkingDir = split-path -parent $MyInvocation.MyCommand.Definition;
 $CefDockerDir = Join-Path $WorkingDir "../CefSharpDockerfiles"
 
 try{
+	Copy (Join-Path $WorkingDir "our_functions.ps1") (Join-Path $CefDockerDir "functions.ps1")
 	. (Join-Path $CefDockerDir 'functions.ps1')
 
 
