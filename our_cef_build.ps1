@@ -16,7 +16,7 @@ if (! $env:ARCHES){
 }
 $ARCHES = $env:ARCHES.Split(" ");
 $ARCHES_TO_BITKEY = @{};
-$Special = $env:Special;
+
 foreach ($arch in $ARCHES) {
 	$arch_bit = $arch;
 	if ($arch_bit.StartsWith("x")) {
