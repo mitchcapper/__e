@@ -156,7 +156,7 @@ if ($VAR_REMOVE_VOLUME_ON_SUCCESSFUL_BUILD){
 }
 Write-Host -ForegroundColor Green Build completed successfully! See $global:PERF_FILE for timing for each step.
 }catch{
-	WriteException $_, "Build.ps1";
+	WriteException $_;
 	Set-Location $ORIGINAL_WORKING_DIR;
 	throw $_;
 }
