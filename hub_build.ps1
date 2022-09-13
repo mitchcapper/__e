@@ -87,10 +87,11 @@ function StatusPrint {
 	#git config --global pack.threads 2
 
 	# frees up a good bit of spce on the c drive where docker runs
-	TimerNow("Starting");
-	Write-Host Freeing up space....
+
 	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
-	if ($NoSpaceFreeIfNeeded -eq $false -and ($Special -eq "RestoreCefSrcArtifact" -or $Special -eq "CefBuild") ){
+	if ($NoSpaceFreeIfNeeded -eq $false -and ($Special -eq "RestoreCefSrcArtifact" -or $Special -eq "CefBuild" -or $Special -eq "MakeCefSrcArtifact") ){
+		TimerNow("Starting");
+		Write-Host Freeing up space....
 		$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
 		TimerNow("Freeing up Space");
 		StatusPrint
