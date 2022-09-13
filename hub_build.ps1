@@ -59,7 +59,7 @@ function StatusPrint {
 	#Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="d:\pagefile.sys";InitialSize = 8192; MaximumSize = 10240;} -EnableAllPrivileges
 	#Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="s:\pagefile.sys";InitialSize = 18432; MaximumSize = 28672;} -EnableAllPrivileges
 
-	if (! (Test-Path -Path "pagefile.sys" -PathType Leaf) ){
+	if (! (Test-Path -Path "c:\pagefile.sys" -PathType Leaf) ){
 		Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="c:\pagefile.sys";InitialSize = 28672; MaximumSize = 38912;} -EnableAllPrivileges
 	}
 
