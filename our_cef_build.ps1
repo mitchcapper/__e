@@ -102,6 +102,8 @@ if (! $NoAutomateGit){
 if ($Special -eq "SrcSave"){
 	Set-Location -Path c:/code;
 	#went back and forth on excluding .git files but we use git apply for patches
+	systeminfo
+	Write-Host Starting to compress source
 	/code/bsdtar --options zstd:compression-level=5, zstd:threads=0 --exclude "*rc.zstd" -acf /temp/artifacts/src.tar.zstd chromium_git
 	$size = ((Get-Item "/temp/artifacts/src.tar.zstd").length/1GB).ToString("0.0 GB");
 	Write-Host Size compressed is: $size

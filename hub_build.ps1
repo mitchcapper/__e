@@ -61,7 +61,8 @@ function StatusPrint {
 
 	if (! [System.IO.File]::Exists("c:\pagefile.sys") ){ #test path ignores system files hahaha
 		Write-Host Updating Page Files shrinking main partition to add a second page file to drive
-		Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="c:\pagefile.sys";InitialSize = 28672; MaximumSize = 38912;} -EnableAllPrivileges
+		Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="c:\pagefile.sys";InitialSize = 10240; MaximumSize = 28672;} -EnableAllPrivileges
+		systeminfo
 	}
 
 	#Get-WmiObject Win32_pagefilesetting
@@ -92,7 +93,8 @@ function StatusPrint {
 	if ($NoSpaceFreeIfNeeded -eq $false -and ($Special -eq "RestoreCefSrcArtifact" -or $Special -eq "CefBuild") ){
 		$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
 		TimerNow("Freeing up Space");
-		Write-Host Space Feed		
+		StatusPrint
+		Write-Host Space Feed
 	}
 
 	#systeminfo
@@ -119,6 +121,7 @@ function StatusPrint {
 		#.\zstd.exe -d vs.tar.zstd -o c:/temp/vs.tar
 		#docker load -i c:/temp/vs.tar
 		Invoke-NativeCommand -FilePath ".\zstd.exe" -ArgumentList @("-d", "vs.tar.zstd", "--stdout") | run docker load | 2ps
+		rm "vs.tar.zstd"
 		Set-Location $CefDockerDir
 		docker images
 		TimerNow("Loaded vs into docker");
