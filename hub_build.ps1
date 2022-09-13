@@ -44,7 +44,7 @@ function StatusPrint {
 }
 
 
-	Write-Host Updating Page Files shrinking main partition to add a second page file to drive
+	
 	#Resize-Partition -DriveLetter C -Size 220GB
 	#New-Partition -DiskNumber 0 -UseMaximumSize -DriveLetter S
 	#Format-Volume -DriveLetter S	
@@ -59,7 +59,8 @@ function StatusPrint {
 	#Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="d:\pagefile.sys";InitialSize = 8192; MaximumSize = 10240;} -EnableAllPrivileges
 	#Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="s:\pagefile.sys";InitialSize = 18432; MaximumSize = 28672;} -EnableAllPrivileges
 
-	if (! (Test-Path -Path "c:\pagefile.sys" -PathType Leaf) ){
+	if ([System.IO.File]::Exists("c:\pagefile.sys") == $false ){ #test path ignores system files hahaha
+		Write-Host Updating Page Files shrinking main partition to add a second page file to drive
 		Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="c:\pagefile.sys";InitialSize = 28672; MaximumSize = 38912;} -EnableAllPrivileges
 	}
 
