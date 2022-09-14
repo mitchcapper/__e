@@ -28,7 +28,7 @@ if (-not $VAR_CEF_BUILD_MOUNT_VOL_NAME){
 }
 
 
-Write-Host -Foreground Green "Will use local volume/build name: '$VAR_CEF_BUILD_MOUNT_VOL_NAME' if not empty will resume cef build in there set `$VAR_CEF_BUILD_MOUNT_VOL_NAME in versions.ps1 to this value to resume"
+Write-Host -Foreground Green "Will use local volume/build name: '$VAR_CEF_BUILD_MOUNT_VOL_NAME' if not empty will resume cef build in there set `$VAR_CEF_BUILD_MOUNT_VOL_NAME in versions.ps1 to this value to resume $Special"
 
 $redirect_output = $false;
 $PSSenderInfo = Get-Variable -name "PSSenderInfo" -ErrorAction SilentlyContinue;
@@ -78,10 +78,12 @@ if (! (Test-Path -Path "zstd.exe" -PathType Leaf) ) {
 
 echo *.zip | out .dockerignore
 TimerNow("Starting");
-RunProc -proc "docker" -redirect_output:$redirect_output -opts "pull $VAR_BASE_DOCKER_FILE";
-TimerNow("Pull base file");
-RunProc -proc "docker" -redirect_output:$redirect_output -opts "build $VAR_HYPERV_MEMORY_ADD --build-arg BASE_DOCKER_FILE=`"$VAR_BASE_DOCKER_FILE`" -f Dockerfile_vs --cache-from vs -t vs ."
-TimerNow("VSBuild");
+if ($Special -ne "MakeCefSrcArtifact" -and $Special -ne "RestoreCefSrcArtifact") {
+	RunProc -proc "docker" -redirect_output:$redirect_output -opts "pull $VAR_BASE_DOCKER_FILE";
+	TimerNow("Pull base file");
+	RunProc -proc "docker" -redirect_output:$redirect_output -opts "build $VAR_HYPERV_MEMORY_ADD --build-arg BASE_DOCKER_FILE=`"$VAR_BASE_DOCKER_FILE`" -f Dockerfile_vs --cache-from vs -t vs ."
+	TimerNow("VSBuild");
+}
 if ($Special -eq "MakeVSCache") {
 	run docker save vs | run zstd "-o" "c:/temp/cache/vs.tar.zstd" | 2ps
 

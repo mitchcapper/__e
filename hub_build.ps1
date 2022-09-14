@@ -20,7 +20,13 @@ Function WriteException2($exp){
 		write-host " $($exp.Exception.InnerException.Message)" -ForegroundColor Red
 	}
 }
-
+function StatusPrint {
+			$os = Get-Ciminstance Win32_OperatingSystem;
+			$physFree = $os.FreePhysicalMemory/1mb;
+			$pageFree = $os.FreeSpaceInPagingFiles/1mb;
+			$space = Get-Volume |  Format-Wide   {$_.DriveLetter +": " + ($_.SizeRemaining/1gb).ToString("0.0").PadLeft(5) + "/" + ($_.Size/1gb).ToString("0.0 gb").PadLeft(8)} -AutoSize | Out-String
+			Write-Host -ForegroundColor Yellow Physical Free Memory: $physFree.ToString("0.0") gb Page: $pageFree.ToString("0.0") gb disk free space: $space.Trim()
+}
 
 $ErrorActionPreference = "Stop";
 $ORIGINAL_WORKING_DIR = Get-Location;
@@ -35,13 +41,7 @@ try{
 
 	
 
-function StatusPrint {
-			$os = Get-Ciminstance Win32_OperatingSystem;
-			$physFree = $os.FreePhysicalMemory/1mb;
-			$pageFree = $os.FreeSpaceInPagingFiles/1mb;
-			$space = Get-Volume |  Format-Wide   {$_.DriveLetter +": " + ($_.SizeRemaining/1gb).ToString("0.0").PadLeft(5) + "/" + ($_.Size/1gb).ToString("0.0 gb").PadLeft(8)} -AutoSize | Out-String
-			Write-Host -ForegroundColor Yellow Physical Free Memory: $physFree.ToString("0.0") gb Page: $pageFree.ToString("0.0") gb disk free space: $space.Trim()
-}
+
 
 
 	
@@ -88,7 +88,7 @@ function StatusPrint {
 
 	# frees up a good bit of spce on the c drive where docker runs
 
-	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK")
+	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK", "C:/Windows/Installer","C:/tools","C:/Program Files/LLVM")
 	if ($NoSpaceFreeIfNeeded -eq $false -and ($Special -eq "RestoreCefSrcArtifact" -or $Special -eq "CefBuild" -or $Special -eq "MakeCefSrcArtifact") ){
 		TimerNow("Starting");
 		Write-Host Freeing up space....
@@ -147,7 +147,7 @@ function StatusPrint {
 	Write-Host -ForegroundColor Green Build completed successfully of test checkout!
 }catch{
 	WriteException2 $_;
-	#StatusPrint;
+	StatusPrint;
 	Set-Location $ORIGINAL_WORKING_DIR;
 	exit 1;
 }
