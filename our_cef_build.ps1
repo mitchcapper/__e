@@ -105,7 +105,7 @@ if ($Special -eq "SrcSave"){
 	systeminfo
 	Write-Host Starting to compress source
 	#have to use --zstd rather than -a to get the zstd options to work
-	/code/bsdtar --zstd --options zstd:compression-level=5,zstd:threads=0 --exclude "*rc.zstd" -cf /temp/artifacts/src.tar.zstd chromium_git
+	/code/bsdtar --zstd --options zstd:compression-level=2,zstd:threads=0 --exclude "*rc.zstd" -cf /temp/artifacts/src.tar.zstd chromium_git
 	$size = ((Get-Item "/temp/artifacts/src.tar.zstd").length/1GB).ToString("0.0 GB");
 	Write-Host Size compressed is: $size
 	exit 0;
