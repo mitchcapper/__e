@@ -88,12 +88,14 @@ try{
 
 	# frees up a good bit of spce on the c drive where docker runs
 
-	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK", "C:/Windows/Installer","C:/tools","C:/Program Files/LLVM")
+	$ToDelete = @("C:/Program Files/Microsoft Visual Studio", "C:/Program Files (x86)/Android", "C:/Program Files (x86)/Windows Kits", "C:/Program Files (x86)/Microsoft SDKs", "C:/Microsoft/AndroidNDK", "C:/Windows/Installer","C:/tools","C:/Program Files/LLVM");
+	$ToDeleteImages = @("mcr.microsoft.com/dotnet/framework/aspnet", "mcr.microsoft.com/dotnet/framework/runtime","mcr.microsoft.com/dotnet/framework/sdk");
 	if ($NoSpaceFreeIfNeeded -eq $false -and ($Special -eq "RestoreCefSrcArtifact" -or $Special -eq "CefBuild" -or $Special -eq "MakeCefSrcArtifact") ){
 		TimerNow("Starting");
 		Write-Host Freeing up space....
 		$ToDelete | foreach { Write-Host Erasing $_; Remove-Item -Recurse -Force $_; }
-		TimerNow("Freeing up Space");
+		TimerNow("Freeing up Folder Space");
+		$ToDeleteImages | foreach { docker rmi $_; }
 		StatusPrint
 		Write-Host Space Feed
 	}
