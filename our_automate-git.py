@@ -744,7 +744,7 @@ if not os.path.exists(gclient_file) or options.forceconfig:
 # Initial Chromium checkout.
 if not options.nochromiumupdate and not os.path.exists(chromium_src_dir):
   chromium_checkout_new = True
-  run("gclient sync --shallow --nohooks --no-history --jobs 1", chromium_dir, \
+  run("gclient sync --shallow --nohooks --no-history --jobs 4", chromium_dir, \
       depot_tools_dir)
 else:
   chromium_checkout_new = False
